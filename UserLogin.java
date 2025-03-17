@@ -2,6 +2,7 @@ import java.sql.*;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -9,12 +10,13 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.Base64;
-
 
 public class UserLogin {
     private Scene loginScene;
@@ -27,25 +29,40 @@ public class UserLogin {
     }
 
     public void initializeComponents() {
-        VBox loginLayout = new VBox(5);
-        loginLayout.setPadding(new Insets(10));
-        Button loginButton = new Button("Sign In");
-        Button signUpButton = new Button("Sign Up");
+        VBox loginLayout = new VBox(10);
+        loginLayout.setPadding(new Insets(20));
+        loginLayout.setAlignment(Pos.CENTER);
+        loginLayout.setStyle("-fx-background-color: #f4f4f4;"); // Light gray background
 
+        Label titleLabel = new Label("Employee Management System");
+        titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 24));
+        titleLabel.setTextFill(Color.DARKBLUE);
+
+        Label usernameLabel = new Label("Username:");
+        usernameField.setMaxWidth(200);
+        usernameField.setStyle("-fx-background-color: #ffffff; -fx-border-color: #cccccc;");
+
+        Label passwordLabel = new Label("Password:");
+        passwordField.setMaxWidth(200);
+        passwordField.setStyle("-fx-background-color: #ffffff; -fx-border-color: #cccccc;");
+
+        Button loginButton = new Button("Sign In");
+        loginButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;");
+        loginButton.setMaxWidth(200);
         loginButton.setOnAction(event -> authenticate());
+
+        Button signUpButton = new Button("Sign Up");
+        signUpButton.setStyle("-fx-background-color: #008CBA; -fx-text-fill: white; -fx-font-weight: bold;");
+        signUpButton.setMaxWidth(200);
         /*signUpButton.setOnAction(event -> {
             UserRegistration userRegistration = new UserRegistration(stage);
             userRegistration.initializeComponents();
         });*/
 
-        loginLayout.getChildren().addAll(new Label("Username:"), usernameField,
-                new Label("Password:"), passwordField,
-                loginButton, new Label("or"), signUpButton);
+        loginLayout.getChildren().addAll(titleLabel, usernameLabel, usernameField, passwordLabel, passwordField, loginButton, signUpButton);
 
-        loginScene = new Scene(loginLayout, 300, 200);
+        loginScene = new Scene(loginLayout, 400, 350); // Adjusted size for better proportions
 
-        // Set the stage to full screen
-        stage.setFullScreen(true);
         stage.setTitle("User Login");
         stage.setScene(loginScene);
         stage.show();
