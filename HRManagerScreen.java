@@ -33,14 +33,12 @@ public class HRManagerScreen {
         welcomeLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 18));
         welcomeLabel.setTextFill(Color.DARKGRAY);
 
-        Label roleLabel = new Label("Role: " + hrManager.getRole());
-        roleLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 16));
-        roleLabel.setTextFill(Color.DARKGRAY);
+
 
         Button manageEmployeeButton = createManageEmployeeButton();
         manageEmployeeButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-min-width: 200px;");
 
-        hrManagerLayout.getChildren().addAll(titleLabel, welcomeLabel, roleLabel, manageEmployeeButton);
+        hrManagerLayout.getChildren().addAll(titleLabel, welcomeLabel, manageEmployeeButton);
 
         Scene hrManagerScene = new Scene(hrManagerLayout, 600, 400);
 
