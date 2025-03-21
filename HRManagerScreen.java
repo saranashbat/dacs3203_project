@@ -34,11 +34,11 @@ public class HRManagerScreen {
         welcomeLabel.setTextFill(Color.DARKGRAY);
 
 
+        // New button for viewing leave requests
+        Button viewLeaveRequestsButton = createViewLeaveRequestsButton();
+        viewLeaveRequestsButton.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold; -fx-min-width: 200px;");
 
-        Button manageEmployeeButton = createManageEmployeeButton();
-        manageEmployeeButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-min-width: 200px;");
-
-        hrManagerLayout.getChildren().addAll(titleLabel, welcomeLabel, manageEmployeeButton);
+        hrManagerLayout.getChildren().addAll(titleLabel, welcomeLabel, viewLeaveRequestsButton);
 
         Scene hrManagerScene = new Scene(hrManagerLayout, 600, 400);
 
@@ -53,5 +53,16 @@ public class HRManagerScreen {
             System.out.println("Managing employees...");
         });
         return manageEmployeeButton;
+    }
+
+    // New method to create and return the "View Leave Requests" button
+    private Button createViewLeaveRequestsButton() {
+        Button viewLeaveRequestsButton = new Button("View Leave Requests");
+        viewLeaveRequestsButton.setOnAction(event -> {
+            // Open the ViewLeaveRequests screen
+            ViewLeaveRequests viewLeaveRequests = new ViewLeaveRequests(hrManager);
+            viewLeaveRequests.initializeComponents();
+        });
+        return viewLeaveRequestsButton;
     }
 }

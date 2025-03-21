@@ -1,6 +1,8 @@
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -45,15 +47,30 @@ public class EmployeeScreen {
         salaryLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 16));
         salaryLabel.setTextFill(Color.DARKGRAY);
 
-        // Add components to the layout
-        employeeLayout.getChildren().addAll(titleLabel, welcomeLabel, positionLabel, salaryLabel);
+        // Leave Request Button
+        Button leaveRequestButton = new Button("Submit Leave Request");
+        leaveRequestButton.setOnAction(e -> {
+            SubmitLeaveRequest submitLeaveRequest = new SubmitLeaveRequest(employee);
+            submitLeaveRequest.initializeComponents();
+        });
+
+        employeeLayout.getChildren().addAll(titleLabel, welcomeLabel, positionLabel, salaryLabel, leaveRequestButton);
 
         // Create the scene
-        Scene employeeScene = new Scene(employeeLayout, 600, 400); // Adjusted size for better proportions
+        Scene employeeScene = new Scene(employeeLayout, 600, 500);
 
         // Set up the stage
         stage.setTitle("Employee Screen");
         stage.setScene(employeeScene);
         stage.show();
+    }
+
+    // Method to show alert messages
+    private void showAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 }
