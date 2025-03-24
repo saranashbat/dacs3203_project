@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 18, 2025 at 01:31 AM
+-- Generation Time: Mar 21, 2025 at 08:11 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -20,6 +20,26 @@ SET time_zone = "+00:00";
 --
 -- Database: `dacs3203_project`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `leaverequests`
+--
+
+CREATE TABLE `leaverequests` (
+  `username` varchar(200) NOT NULL,
+  `startdate` date NOT NULL,
+  `enddate` date NOT NULL,
+  `status` varchar(200) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `leaverequests`
+--
+
+INSERT INTO `leaverequests` (`username`, `startdate`, `enddate`, `status`) VALUES
+('employee#1', '2025-03-13', '2025-03-29', 'Pending');
 
 -- --------------------------------------------------------
 

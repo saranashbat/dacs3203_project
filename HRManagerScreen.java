@@ -38,7 +38,9 @@ public class HRManagerScreen {
         Button viewLeaveRequestsButton = createViewLeaveRequestsButton();
         viewLeaveRequestsButton.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold; -fx-min-width: 200px;");
 
-        hrManagerLayout.getChildren().addAll(titleLabel, welcomeLabel, viewLeaveRequestsButton);
+        Button viewPayrollsButton = createViewPayrollsButton();
+        viewPayrollsButton.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold; -fx-min-width: 200px;");
+        hrManagerLayout.getChildren().addAll(titleLabel, welcomeLabel, viewLeaveRequestsButton, viewPayrollsButton);
 
         Scene hrManagerScene = new Scene(hrManagerLayout, 600, 400);
 
@@ -64,5 +66,15 @@ public class HRManagerScreen {
             viewLeaveRequests.initializeComponents();
         });
         return viewLeaveRequestsButton;
+    }
+
+    private Button createViewPayrollsButton() {
+        Button viewPayrollsButton = new Button("View Payrolls");
+        viewPayrollsButton.setOnAction(event -> {
+            // Open the ViewLeaveRequests screen
+            ViewPayrolls viewPayrolls = new ViewPayrolls(hrManager);
+            viewPayrolls.initializeComponents();
+        });
+        return viewPayrollsButton;
     }
 }
