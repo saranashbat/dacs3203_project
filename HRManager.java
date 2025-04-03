@@ -117,4 +117,25 @@ public class HRManager extends User {
             System.out.println("Payroll record updated for " + payroll.getUsername());
         }
     }
+
+    public void assignProject(String username, String projectName) throws SQLException {
+        String query = "UPDATE users SET project = ? WHERE username = ?";
+
+        try (Connection con = DBUtils.establishConnection();
+             PreparedStatement stmt = con.prepareStatement(query)) {
+
+            stmt.setString(1, projectName);
+            stmt.setString(2, username);
+
+            int rowsUpdated = stmt.executeUpdate();
+            if (rowsUpdated > 0) {
+                System.out.println("Project '" + projectName + "' assigned to user: " + username);
+            } else {
+                throw new SQLException("No matching user found with username: " + username);
+            }
+        }
+    }
+
 }
+
+

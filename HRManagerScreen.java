@@ -40,7 +40,12 @@ public class HRManagerScreen {
 
         Button viewPayrollsButton = createViewPayrollsButton();
         viewPayrollsButton.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold; -fx-min-width: 200px;");
-        hrManagerLayout.getChildren().addAll(titleLabel, welcomeLabel, viewLeaveRequestsButton, viewPayrollsButton);
+
+        Button assignProjectButton = createAssignProjectButton();
+        assignProjectButton.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold; -fx-min-width: 200px;");
+
+
+        hrManagerLayout.getChildren().addAll(titleLabel, welcomeLabel, viewLeaveRequestsButton, viewPayrollsButton, assignProjectButton);
 
         Scene hrManagerScene = new Scene(hrManagerLayout, 600, 400);
 
@@ -57,11 +62,9 @@ public class HRManagerScreen {
         return manageEmployeeButton;
     }
 
-    // New method to create and return the "View Leave Requests" button
     private Button createViewLeaveRequestsButton() {
         Button viewLeaveRequestsButton = new Button("View Leave Requests");
         viewLeaveRequestsButton.setOnAction(event -> {
-            // Open the ViewLeaveRequests screen
             ViewLeaveRequests viewLeaveRequests = new ViewLeaveRequests(hrManager);
             viewLeaveRequests.initializeComponents();
         });
@@ -71,10 +74,18 @@ public class HRManagerScreen {
     private Button createViewPayrollsButton() {
         Button viewPayrollsButton = new Button("View Payrolls");
         viewPayrollsButton.setOnAction(event -> {
-            // Open the ViewLeaveRequests screen
             ViewPayrolls viewPayrolls = new ViewPayrolls(hrManager);
             viewPayrolls.initializeComponents();
         });
         return viewPayrollsButton;
+    }
+
+    private Button createAssignProjectButton() {
+        Button assignProjectButton = new Button("Assign Projects");
+        assignProjectButton.setOnAction(event -> {
+            AssignProject assignProject = new AssignProject(hrManager);
+            assignProject.initializeComponents();
+        });
+        return assignProjectButton;
     }
 }

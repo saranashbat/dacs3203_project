@@ -106,7 +106,7 @@ public class ViewPayrolls {
                 requestContainer.getChildren().add(errorLabel);
             }
         });
-        // Back Button
+
         Button backButton = new Button("Back");
         backButton.setOnAction(e -> stage.close());
 
