@@ -14,7 +14,6 @@ public class Payroll {
         this.totalPay = salary + bonus - deductions;
     }
 
-    // Getters and Setters
     public String getUsername() { return username; }
     public double getSalary() { return salary; }
     public double getBonus() { return bonus; }

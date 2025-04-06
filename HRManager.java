@@ -8,17 +8,14 @@ public class HRManager extends User {
         super(username, password, role);
     }
 
-    // Approve leave request method
     public void approveLeaveRequest(String username) throws SQLException {
         String query = "UPDATE leaverequests SET status = 'approved' WHERE username = ? AND status = 'pending'";
 
         try (Connection con = DBUtils.establishConnection();
              PreparedStatement stmt = con.prepareStatement(query)) {
 
-            // Set the username parameter in the query
             stmt.setString(1, username);
 
-            // Execute the query to update the status
             int rowsUpdated = stmt.executeUpdate();
             if (rowsUpdated > 0) {
                 System.out.println("Leave Request for " + username + " has been approved.");
@@ -31,7 +28,6 @@ public class HRManager extends User {
         }
     }
 
-    // Method to get all leave requests from the database
     public List<LeaveRequest> getAllLeaveRequests() throws SQLException {
         List<LeaveRequest> leaveRequests = new ArrayList<>();
 
@@ -41,14 +37,12 @@ public class HRManager extends User {
              Statement stmt = con.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
 
-            // Iterate over the result set and create LeaveRequest objects
             while (rs.next()) {
                 String username = rs.getString("username");
                 String startDate = rs.getString("startdate");
                 String endDate = rs.getString("enddate");
                 String status = rs.getString("status");
 
-                // Create LeaveRequest object and add it to the list
                 LeaveRequest leaveRequest = new LeaveRequest(username, startDate, endDate, status);
                 leaveRequests.add(leaveRequest);
             }
@@ -77,7 +71,6 @@ public class HRManager extends User {
         }
     }
 
-    // Retrieve all payroll records
     public List<Payroll> getAllPayrolls() throws SQLException {
         List<Payroll> payrolls = new ArrayList<>();
         String query = "SELECT * FROM payrolls";
@@ -100,23 +93,89 @@ public class HRManager extends User {
         return payrolls;
     }
 
-    // Update payroll record
-    public void updatePayroll(Payroll payroll) throws SQLException {
-        String query = "UPDATE payrolls SET salary = ?, bonus = ?, deductions = ?, totalPay = ? WHERE username = ?";
+    public Payroll getPayrollByUsername(String username) throws SQLException {
+        Payroll payroll = null;
+        String query = "SELECT * FROM payrolls WHERE username = ?";
 
         try (Connection con = DBUtils.establishConnection();
              PreparedStatement stmt = con.prepareStatement(query)) {
 
-            stmt.setDouble(1, payroll.getSalary());
-            stmt.setDouble(2, payroll.getBonus());
-            stmt.setDouble(3, payroll.getDeductions());
-            stmt.setDouble(4, payroll.getTotalPay());
-            stmt.setString(5, payroll.getUsername());
+            stmt.setString(1, username);
 
-            stmt.executeUpdate();
-            System.out.println("Payroll record updated for " + payroll.getUsername());
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    double salary = rs.getDouble("salary");
+                    double bonus = rs.getDouble("bonus");
+                    double deductions = rs.getDouble("deductions");
+                    double totalPay = rs.getDouble("totalPay");
+
+                    payroll = new Payroll(username, salary, bonus, deductions);
+                } else {
+                    System.out.println("No payroll found for username: " + username);
+                }
+            }
+
+        } catch (SQLException e) {
+            throw e;
+        }
+
+        return payroll;
+    }
+    public List<Employee> getAllEmployees() throws SQLException {
+        List<Employee> employees = new ArrayList<>();
+
+        Connection con = DBUtils.establishConnection();
+
+        String query = "SELECT username, hashedpass, role, position, salary, project, vacationdays FROM users WHERE role != 'hrmanager'";
+        PreparedStatement stmt = con.prepareStatement(query);
+
+        ResultSet rs = stmt.executeQuery();
+
+        while (rs.next()) {
+            String username = rs.getString("username");
+            String password = rs.getString("hashedpass");
+            String role = rs.getString("role");
+            String position = rs.getString("position");
+            double salary = rs.getDouble("salary");
+            String project = rs.getString("project");
+            int vacationDays = rs.getInt("vacationdays");
+
+            Employee employee = new Employee(username, password, role, position, salary, project, vacationDays);
+            employees.add(employee);
+        }
+
+
+
+        return employees;
+    }
+
+
+    public void updatePayroll(Payroll payroll) throws SQLException {
+        String checkQuery = "SELECT COUNT(*) FROM payrolls WHERE username = ?";
+        String updateQuery = "UPDATE payrolls SET salary = ?, bonus = ?, deductions = ?, totalPay = ? WHERE username = ?";
+
+        try (Connection con = DBUtils.establishConnection();
+             PreparedStatement checkStmt = con.prepareStatement(checkQuery)) {
+
+            checkStmt.setString(1, payroll.getUsername());
+            ResultSet rs = checkStmt.executeQuery();
+            if (rs.next() && rs.getInt(1) == 0) {
+                throw new SQLException("No payroll record found for username: " + payroll.getUsername());
+            }
+
+            try (PreparedStatement updateStmt = con.prepareStatement(updateQuery)) {
+                updateStmt.setDouble(1, payroll.getSalary());
+                updateStmt.setDouble(2, payroll.getBonus());
+                updateStmt.setDouble(3, payroll.getDeductions());
+                updateStmt.setDouble(4, payroll.getTotalPay());
+                updateStmt.setString(5, payroll.getUsername());
+
+                updateStmt.executeUpdate();
+                System.out.println("Payroll record updated for " + payroll.getUsername());
+            }
         }
     }
+
 
     public void assignProject(String username, String projectName) throws SQLException {
         String query = "UPDATE users SET project = ? WHERE username = ?";

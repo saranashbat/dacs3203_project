@@ -5,8 +5,8 @@ import java.util.concurrent.TimeUnit;
 
 public class LeaveRequest {
     private String username;
-    private String startDate;  // Changed to String
-    private String endDate;    // Changed to String
+    private String startDate;
+    private String endDate;
     private String status;
 
     public LeaveRequest(String username, String startDate, String endDate, String status) {
@@ -48,9 +48,7 @@ public class LeaveRequest {
         this.status = status;
     }
 
-    // Method to calculate duration in days
     public int duration() throws ParseException {
-        // SimpleDateFormat to parse the date from String to Date
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date start = sdf.parse(startDate);
         Date end = sdf.parse(endDate);

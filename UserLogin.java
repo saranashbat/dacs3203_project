@@ -32,36 +32,33 @@ public class UserLogin {
         VBox loginLayout = new VBox(10);
         loginLayout.setPadding(new Insets(20));
         loginLayout.setAlignment(Pos.CENTER);
-        loginLayout.setStyle("-fx-background-color: #f4f4f4;"); // Light gray background
+        loginLayout.setStyle("-fx-background-color: #f9f9f9;");
 
         Label titleLabel = new Label("Employee Management System");
         titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 24));
-        titleLabel.setTextFill(Color.DARKBLUE);
+        titleLabel.setTextFill(Color.DARKSLATEGRAY);
 
         Label usernameLabel = new Label("Username:");
         usernameField.setMaxWidth(200);
-        usernameField.setStyle("-fx-background-color: #ffffff; -fx-border-color: #cccccc;");
+        usernameField.setStyle("-fx-background-color: #ffffff; -fx-border-color: #d1d1d1; -fx-border-radius: 5;");
 
         Label passwordLabel = new Label("Password:");
         passwordField.setMaxWidth(200);
-        passwordField.setStyle("-fx-background-color: #ffffff; -fx-border-color: #cccccc;");
+        passwordField.setStyle("-fx-background-color: #ffffff; -fx-border-color: #d1d1d1; -fx-border-radius: 5;");
 
         Button loginButton = new Button("Sign In");
-        loginButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;");
-        loginButton.setMaxWidth(200);
+        loginButton.setStyle("-fx-background-color: #7fa9d8; -fx-text-fill: white; -fx-font-weight: bold; -fx-border-radius: 5; -fx-background-radius: 5;");
+        loginButton.setMaxWidth(150);
         loginButton.setOnAction(event -> authenticate());
 
         Button signUpButton = new Button("Sign Up");
-        signUpButton.setStyle("-fx-background-color: #008CBA; -fx-text-fill: white; -fx-font-weight: bold;");
-        signUpButton.setMaxWidth(200);
-        /*signUpButton.setOnAction(event -> {
-            UserRegistration userRegistration = new UserRegistration(stage);
-            userRegistration.initializeComponents();
-        });*/
+        signUpButton.setStyle("-fx-background-color: #90c6e6; -fx-text-fill: white; -fx-font-weight: bold; -fx-border-radius: 5; -fx-background-radius: 5;");
+        signUpButton.setMaxWidth(150);
+        // signUpButton.setOnAction(event -> {});
 
         loginLayout.getChildren().addAll(titleLabel, usernameLabel, usernameField, passwordLabel, passwordField, loginButton, signUpButton);
 
-        loginScene = new Scene(loginLayout, 400, 350); // Adjusted size for better proportions
+        loginScene = new Scene(loginLayout, 450, 350);
 
         stage.setTitle("User Login");
         stage.setScene(loginScene);

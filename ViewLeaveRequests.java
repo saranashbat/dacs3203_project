@@ -23,25 +23,22 @@ public class ViewLeaveRequests {
     public void initializeComponents() {
         stage = new Stage();
 
-        // Main layout
         VBox layout = new VBox(20);
         layout.setPadding(new Insets(20));
         layout.setAlignment(Pos.TOP_CENTER);
-        layout.setStyle("-fx-background-color: #f4f4f4;");
+        layout.setStyle("-fx-background-color: #f9f9f9;");
 
-        // Title
         Label titleLabel = new Label("View All Leave Requests");
         titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 24));
-        titleLabel.setTextFill(Color.DARKBLUE);
+        titleLabel.setTextFill(Color.DARKSLATEGRAY);
 
         Button backButton = new Button("Back");
+        styleBackButton(backButton);
         backButton.setOnAction(e -> stage.close());
 
-        // Container for leave requests
         VBox requestContainer = new VBox(10);
         requestContainer.setPadding(new Insets(10));
 
-        // ScrollPane for requests
         ScrollPane scrollPane = new ScrollPane(requestContainer);
         scrollPane.setFitToWidth(true);
         scrollPane.setPrefHeight(200);
@@ -64,12 +61,16 @@ public class ViewLeaveRequests {
             ex.printStackTrace();
         }
 
-        // Username field to approve
         Label usernameLabel = new Label("Enter Username to Approve:");
+        usernameLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 16));
+        usernameLabel.setTextFill(Color.DARKSLATEGRAY);
+
         TextField usernameField = new TextField();
         usernameField.setMaxWidth(200);
+        usernameField.setStyle("-fx-background-color: #f9f9f9; -fx-border-radius: 10px; -fx-border-color: #c4d1e0;");
 
         Button approveButton = new Button("Approve Leave Request");
+        styleButton(approveButton);
         approveButton.setOnAction(e -> {
             String usernameToApprove = usernameField.getText().trim();
 
@@ -86,13 +87,30 @@ public class ViewLeaveRequests {
             }
         });
 
-        // Layout arrangement
         layout.getChildren().addAll(titleLabel, scrollPane, usernameLabel, usernameField, approveButton, backButton);
 
         Scene scene = new Scene(layout, 600, 500);
         stage.setTitle("View Leave Requests");
         stage.setScene(scene);
         stage.show();
+    }
+
+    private void styleButton(Button button) {
+        button.setStyle("-fx-background-color: #7fa9d8; -fx-text-fill: white; -fx-font-weight: bold; "
+                + "-fx-min-width: 200px; -fx-pref-height: 40px; -fx-background-radius: 20px;");
+        button.setOnMouseEntered(e -> button.setStyle("-fx-background-color: #90c6e6; -fx-text-fill: white; -fx-font-weight: bold; "
+                + "-fx-min-width: 200px; -fx-pref-height: 40px; -fx-background-radius: 20px;"));
+        button.setOnMouseExited(e -> button.setStyle("-fx-background-color: #7fa9d8; -fx-text-fill: white; -fx-font-weight: bold; "
+                + "-fx-min-width: 200px; -fx-pref-height: 40px; -fx-background-radius: 20px;"));
+    }
+
+    private void styleBackButton(Button button) {
+        button.setStyle("-fx-background-color: #dcdcdc; -fx-text-fill: #333333; -fx-font-weight: normal; "
+                + "-fx-min-width: 120px; -fx-pref-height: 30px; -fx-background-radius: 15px;");
+        button.setOnMouseEntered(e -> button.setStyle("-fx-background-color: #c0c0c0; -fx-text-fill: #333333; -fx-font-weight: normal; "
+                + "-fx-min-width: 120px; -fx-pref-height: 30px; -fx-background-radius: 15px;"));
+        button.setOnMouseExited(e -> button.setStyle("-fx-background-color: #dcdcdc; -fx-text-fill: #333333; -fx-font-weight: normal; "
+                + "-fx-min-width: 120px; -fx-pref-height: 30px; -fx-background-radius: 15px;"));
     }
 
     private void showAlert(String title, String content) {

@@ -2,13 +2,14 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
 import java.sql.SQLException;
+import java.util.List;
 
 public class ViewPayrolls {
     private HRManager hrManager;
@@ -21,101 +22,81 @@ public class ViewPayrolls {
     public void initializeComponents() {
         stage = new Stage();
 
-        VBox layout = new VBox(10);
+        VBox layout = new VBox(20);
         layout.setPadding(new Insets(20));
         layout.setAlignment(Pos.CENTER);
-        layout.setStyle("-fx-background-color: #f4f4f4;");
+        layout.setStyle("-fx-background-color: #f9f9f9;");
 
-        Label titleLabel = new Label("Payroll Management");
+        Label titleLabel = new Label("View Payrolls by Employee");
         titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 24));
-        titleLabel.setTextFill(Color.DARKBLUE);
+        titleLabel.setTextFill(Color.DARKSLATEGRAY);
 
-        TextField usernameField = new TextField();
-        usernameField.setPromptText("Username");
+        ComboBox<String> employeeComboBox = new ComboBox<>();
+        employeeComboBox.setPromptText("Select Employee");
+        styleComboBox(employeeComboBox);
 
-        TextField salaryField = new TextField();
-        salaryField.setPromptText("Salary");
+        try {
+            List<Employee> employees = hrManager.getAllEmployees();
+            for (Employee employee : employees) {
+                employeeComboBox.getItems().add(employee.getUsername());
 
-        TextField bonusField = new TextField();
-        bonusField.setPromptText("Bonus");
-
-        TextField deductionsField = new TextField();
-        deductionsField.setPromptText("Deductions");
-
-        usernameField.setMaxWidth(200);
-        salaryField.setMaxWidth(200);
-        bonusField.setMaxWidth(200);
-        deductionsField.setMaxWidth(200);
-
-        Label totalPayLabel = new Label("Total Pay: ");
-
-        Button calculateButton = new Button("Calculate");
-        calculateButton.setOnAction(e -> {
-            try {
-                String username = usernameField.getText();
-                double salary = Double.parseDouble(salaryField.getText());
-                double bonus = Double.parseDouble(bonusField.getText());
-                double deductions = Double.parseDouble(deductionsField.getText());
-
-                Payroll payroll = new Payroll(username, salary, bonus, deductions);
-                double totalPay = payroll.getTotalPay();
-
-                totalPayLabel.setText("Total Pay: " + totalPay);
-            } catch (NumberFormatException ex) {
-                totalPayLabel.setText("Invalid input. Please enter valid numbers.");
             }
-        });
+        } catch (SQLException ex) {
+            showError("Error fetching employees: " + ex.getMessage());
+        }
 
-        Button addPayrollButton = new Button("Add Payroll");
-        addPayrollButton.setOnAction(e -> {
-            try {
-                String username = usernameField.getText();
-                double salary = Double.parseDouble(salaryField.getText());
-                double bonus = Double.parseDouble(bonusField.getText());
-                double deductions = Double.parseDouble(deductionsField.getText());
+        Label payrollDetailsLabel = new Label("Select an employee to view payroll details.");
+        payrollDetailsLabel.setWrapText(true);
+        payrollDetailsLabel.setStyle("-fx-background-color: white; -fx-padding: 10; -fx-border-radius: 10; -fx-background-radius: 10; -fx-border-color: lightgray;");
 
-                Payroll payroll = new Payroll(username, salary, bonus, deductions);
-                hrManager.addPayroll(payroll);
-                totalPayLabel.setText("Payroll added successfully.");
-
-            } catch (NumberFormatException | SQLException ex) {
-                totalPayLabel.setText("Invalid input. Please enter valid numbers.");
-            }
-        });
-
-        VBox requestContainer = new VBox(10);
-
-        Button viewPayrollsButton = new Button("View All Payrolls");
-        viewPayrollsButton.setOnAction(e -> {
-            requestContainer.getChildren().clear();
-            try {
-                for (Payroll payroll : hrManager.getAllPayrolls()) {
-                    Label payrollLabel = new Label(
-                            "Username: " + payroll.getUsername() +
-                                    "\nSalary: " + payroll.getSalary() +
-                                    "\nBonus: " + payroll.getBonus() +
-                                    "\nDeductions: " + payroll.getDeductions() +
-                                    "\nTotal Pay: " + payroll.getTotalPay()
-                    );
-                    payrollLabel.setWrapText(true);
-                    payrollLabel.setStyle("-fx-background-color: white; -fx-padding: 10; -fx-border-radius: 10; -fx-background-radius: 10; -fx-border-color: lightgray;");
-                    requestContainer.getChildren().add(payrollLabel);
+        employeeComboBox.setOnAction(e -> {
+            String selectedEmployee = employeeComboBox.getValue();
+            if (selectedEmployee != null) {
+                try {
+                    Payroll payroll = hrManager.getPayrollByUsername(selectedEmployee);
+                    String payrollInfo = "Username: " + payroll.getUsername() +
+                            "\nSalary: " + payroll.getSalary() +
+                            "\nBonus: " + payroll.getBonus() +
+                            "\nDeductions: " + payroll.getDeductions() +
+                            "\nTotal Pay: " + payroll.getTotalPay();
+                    payrollDetailsLabel.setText(payrollInfo);
+                } catch (SQLException ex) {
+                    showError("Error fetching payroll: " + ex.getMessage());
                 }
-            } catch (SQLException ex) {
-                Label errorLabel = new Label("Error fetching payrolls: " + ex.getMessage());
-                requestContainer.getChildren().add(errorLabel);
             }
         });
 
         Button backButton = new Button("Back");
+        styleBackButton(backButton);
         backButton.setOnAction(e -> stage.close());
 
-        layout.getChildren().addAll(titleLabel, usernameField, salaryField, bonusField, deductionsField,
-                calculateButton, addPayrollButton, viewPayrollsButton, totalPayLabel, requestContainer,backButton);
+        layout.getChildren().addAll(titleLabel, employeeComboBox, payrollDetailsLabel, backButton);
 
-        Scene scene = new Scene(layout, 400, 600);
-        stage.setTitle("Payroll Management");
+        Scene scene = new Scene(layout, 400, 400);
+        stage.setTitle("View Payrolls");
         stage.setScene(scene);
         stage.show();
+    }
+
+    private void styleComboBox(ComboBox<String> comboBox) {
+        comboBox.setStyle("-fx-background-color: white; -fx-border-radius: 10px; -fx-border-color: #c4d1e0;");
+        comboBox.setMaxWidth(200);
+    }
+
+    private void styleBackButton(Button button) {
+        button.setStyle("-fx-background-color: #dcdcdc; -fx-text-fill: #333333; -fx-font-weight: normal; "
+                + "-fx-min-width: 120px; -fx-pref-height: 30px; -fx-background-radius: 15px;");
+        button.setOnMouseEntered(e -> button.setStyle("-fx-background-color: #c0c0c0; -fx-text-fill: #333333; -fx-font-weight: normal; "
+                + "-fx-min-width: 120px; -fx-pref-height: 30px; -fx-background-radius: 15px;"));
+        button.setOnMouseExited(e -> button.setStyle("-fx-background-color: #dcdcdc; -fx-text-fill: #333333; -fx-font-weight: normal; "
+                + "-fx-min-width: 120px; -fx-pref-height: 30px; -fx-background-radius: 15px;"));
+    }
+
+    private void showError(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }

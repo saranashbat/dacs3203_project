@@ -1,4 +1,3 @@
-// Imports
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -25,27 +24,28 @@ public class SubmitLeaveRequest {
     public void initializeComponents() {
         stage = new Stage();
 
-        // Layout
         VBox layout = new VBox(20);
-        layout.setPadding(new Insets(20));
+        layout.setPadding(new Insets(30));
         layout.setAlignment(Pos.CENTER);
-        layout.setStyle("-fx-background-color: #f4f4f4;");
+        layout.setStyle("-fx-background-color: #f9f9f9;");
 
-        // Title
         Label titleLabel = new Label("Submit Leave Request");
         titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 24));
-        titleLabel.setTextFill(Color.DARKBLUE);
+        titleLabel.setTextFill(Color.DARKSLATEGRAY);
 
-        // Start Date Picker
         Label startDateLabel = new Label("Start Date:");
+        startDateLabel.setFont(Font.font("Arial", FontWeight.BOLD, 16));
+        startDateLabel.setTextFill(Color.DARKSLATEGRAY);
         DatePicker startDatePicker = new DatePicker();
 
-        // End Date Picker
         Label endDateLabel = new Label("End Date:");
+        endDateLabel.setFont(Font.font("Arial", FontWeight.BOLD, 16));
+        endDateLabel.setTextFill(Color.DARKSLATEGRAY);
         DatePicker endDatePicker = new DatePicker();
 
-        // Submit Button
         Button submitButton = new Button("Submit Leave Request");
+        submitButton.setStyle("-fx-background-color: #7fa9d8; -fx-text-fill: white; -fx-font-weight: bold; -fx-border-radius: 5; -fx-background-radius: 5;");
+        submitButton.setMaxWidth(175);
         submitButton.setOnAction(e -> {
             LocalDate startDate = startDatePicker.getValue();
             LocalDate endDate = endDatePicker.getValue();
@@ -66,21 +66,19 @@ public class SubmitLeaveRequest {
             }
         });
 
-        // Back Button
         Button backButton = new Button("Back");
+        backButton.setStyle("-fx-background-color: #90c6e6; -fx-text-fill: white; -fx-font-weight: bold; -fx-border-radius: 5; -fx-background-radius: 5;");
+        backButton.setMaxWidth(175);
         backButton.setOnAction(e -> stage.close());
 
-        // Add components to layout
         layout.getChildren().addAll(titleLabel, startDateLabel, startDatePicker, endDateLabel, endDatePicker, submitButton, backButton);
 
-        // Scene setup
-        Scene scene = new Scene(layout, 400, 300);
+        Scene scene = new Scene(layout, 400, 500);
         stage.setTitle("Submit Leave Request");
         stage.setScene(scene);
         stage.show();
     }
 
-    // Show alert method
     private void showAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);

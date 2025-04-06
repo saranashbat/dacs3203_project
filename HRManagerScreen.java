@@ -21,45 +21,60 @@ public class HRManagerScreen {
         stage = new Stage();
 
         VBox hrManagerLayout = new VBox(20);
-        hrManagerLayout.setPadding(new Insets(20));
+        hrManagerLayout.setPadding(new Insets(40));
         hrManagerLayout.setAlignment(Pos.CENTER);
-        hrManagerLayout.setStyle("-fx-background-color: #f4f4f4;");
+        hrManagerLayout.setStyle("-fx-background-color: #f9f9f9;");
 
         Label titleLabel = new Label("HR Manager Dashboard");
         titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 24));
-        titleLabel.setTextFill(Color.DARKBLUE);
+        titleLabel.setTextFill(Color.DARKSLATEGRAY);
 
         Label welcomeLabel = new Label("Welcome, " + hrManager.getUsername());
         welcomeLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 18));
         welcomeLabel.setTextFill(Color.DARKGRAY);
 
-
-        // New button for viewing leave requests
         Button viewLeaveRequestsButton = createViewLeaveRequestsButton();
-        viewLeaveRequestsButton.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold; -fx-min-width: 200px;");
+        styleButton(viewLeaveRequestsButton);
 
         Button viewPayrollsButton = createViewPayrollsButton();
-        viewPayrollsButton.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold; -fx-min-width: 200px;");
+        styleButton(viewPayrollsButton);
 
         Button assignProjectButton = createAssignProjectButton();
-        assignProjectButton.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold; -fx-min-width: 200px;");
+        styleButton(assignProjectButton);
 
+        Button viewHoursButton = createViewHoursButton();
+        styleButton(viewHoursButton);
 
-        hrManagerLayout.getChildren().addAll(titleLabel, welcomeLabel, viewLeaveRequestsButton, viewPayrollsButton, assignProjectButton);
+        Button logoutButton = createLogoutButton();
+        styleLogoutButton(logoutButton);
 
-        Scene hrManagerScene = new Scene(hrManagerLayout, 600, 400);
+        hrManagerLayout.getChildren().addAll(
+                titleLabel, welcomeLabel, viewLeaveRequestsButton, viewPayrollsButton,
+                assignProjectButton, viewHoursButton, logoutButton
+        );
 
+        Scene hrManagerScene = new Scene(hrManagerLayout, 600, 500);
         stage.setTitle("HR Manager Screen");
         stage.setScene(hrManagerScene);
         stage.show();
     }
 
-    private Button createManageEmployeeButton() {
-        Button manageEmployeeButton = new Button("Manage Employees");
-        manageEmployeeButton.setOnAction(event -> {
-            System.out.println("Managing employees...");
-        });
-        return manageEmployeeButton;
+    private void styleButton(Button button) {
+        button.setStyle("-fx-background-color: #7fa9d8; -fx-text-fill: white; -fx-font-weight: bold; "
+                + "-fx-min-width: 200px; -fx-pref-height: 40px; -fx-background-radius: 20px;");
+        button.setOnMouseEntered(e -> button.setStyle("-fx-background-color: #90c6e6; -fx-text-fill: white; -fx-font-weight: bold; "
+                + "-fx-min-width: 200px; -fx-pref-height: 40px; -fx-background-radius: 20px;"));
+        button.setOnMouseExited(e -> button.setStyle("-fx-background-color: #7fa9d8; -fx-text-fill: white; -fx-font-weight: bold; "
+                + "-fx-min-width: 200px; -fx-pref-height: 40px; -fx-background-radius: 20px;"));
+    }
+
+    private void styleLogoutButton(Button button) {
+        button.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold; "
+                + "-fx-min-width: 100px; -fx-pref-height: 40px; -fx-background-radius: 20px;");
+        button.setOnMouseEntered(e -> button.setStyle("-fx-background-color: #c0392b; -fx-text-fill: white; -fx-font-weight: bold; "
+                + "-fx-min-width: 100px; -fx-pref-height: 40px; -fx-background-radius: 20px;"));
+        button.setOnMouseExited(e -> button.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold; "
+                + "-fx-min-width: 100px; -fx-pref-height: 40px; -fx-background-radius: 20px;"));
     }
 
     private Button createViewLeaveRequestsButton() {
@@ -72,12 +87,12 @@ public class HRManagerScreen {
     }
 
     private Button createViewPayrollsButton() {
-        Button viewPayrollsButton = new Button("View Payrolls");
-        viewPayrollsButton.setOnAction(event -> {
-            ViewPayrolls viewPayrolls = new ViewPayrolls(hrManager);
-            viewPayrolls.initializeComponents();
+        Button addPayrollsButton = new Button("View Payrolls");
+        addPayrollsButton.setOnAction(event -> {
+            AddPayrolls addPayrolls = new AddPayrolls(hrManager);
+            addPayrolls.initializeComponents();
         });
-        return viewPayrollsButton;
+        return addPayrollsButton;
     }
 
     private Button createAssignProjectButton() {
@@ -87,5 +102,25 @@ public class HRManagerScreen {
             assignProject.initializeComponents();
         });
         return assignProjectButton;
+    }
+
+    private Button createViewHoursButton() {
+        Button viewHoursButton = new Button("View Work Hours");
+        viewHoursButton.setOnAction(event -> {
+            ViewWorkHours viewWorkHours = new ViewWorkHours(hrManager);
+            viewWorkHours.initializeComponents();
+        });
+        return viewHoursButton;
+    }
+
+    private Button createLogoutButton() {
+        Button logoutButton = new Button("Logout");
+        logoutButton.setOnAction(event -> {
+            stage.close();
+
+            UserLogin loginScreen = new UserLogin(stage);
+            loginScreen.initializeComponents();
+        });
+        return logoutButton;
     }
 }
