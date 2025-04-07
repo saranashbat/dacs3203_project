@@ -43,11 +43,12 @@ public class TrackWorkHours {
                 assignedProject = rs.getString("project");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            showAlert("Error", "Database error: " + e.getMessage());
+            return;
         }
 
         if (assignedProject == null) {
-            new Alert(Alert.AlertType.ERROR, "No project assigned to this user.").showAndWait();
+            showAlert("Error", "No project assigned to this user.");
             return;
         }
         final String finalProject = assignedProject;
@@ -68,13 +69,16 @@ public class TrackWorkHours {
         HBox dateRow = new HBox(10);
         dateRow.setAlignment(Pos.CENTER);
 
-        Label dateLabel = new Label("Select Date:");
+        Label dateLabel = new Label("Today's Date:");
         dateLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
         dateLabel.setTextFill(Color.DARKSLATEGRAY);
 
-        DatePicker workDatePicker = new DatePicker();
+        // Display today's date as a label
+        Label todayDateLabel = new Label(LocalDate.now().toString());
+        todayDateLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
+        todayDateLabel.setTextFill(Color.DARKSLATEGRAY);
 
-        dateRow.getChildren().addAll(dateLabel, workDatePicker);
+        dateRow.getChildren().addAll(dateLabel, todayDateLabel);
 
         HBox hoursRow = new HBox(10);
         hoursRow.setAlignment(Pos.CENTER);
@@ -104,14 +108,7 @@ public class TrackWorkHours {
         submitButton.setStyle("-fx-background-color: #7fa9d8; -fx-text-fill: white; -fx-font-weight: bold; -fx-border-radius: 5; -fx-background-radius: 5;");
         submitButton.setMaxWidth(175);
         submitButton.setOnAction(e -> {
-            LocalDate workDate = workDatePicker.getValue();
-            LocalDate today = LocalDate.now();
-
-            if (workDate != null && workDate.isBefore(today)) {
-                new Alert(Alert.AlertType.ERROR, "Work date cannot be in the past.").showAndWait();
-                return;
-            }
-
+            LocalDate workDate = LocalDate.now();  // Automatically set to today's date
             double hoursWorked;
             try {
                 hoursWorked = Double.parseDouble(hoursWorkedField.getText());
@@ -119,24 +116,17 @@ public class TrackWorkHours {
                     throw new NumberFormatException("Hours must be between 0 and 12.");
                 }
             } catch (NumberFormatException ex) {
-                new Alert(Alert.AlertType.ERROR, "Invalid hours. Please enter a valid number.").showAndWait();
+                showAlert("Error", "Invalid hours. Please enter a valid number.");
                 return;
             }
 
             String description = descriptionField.getText();
 
-            try (Connection con = DBUtils.establishConnection()) {
-                String query = "INSERT INTO workhours (username, name, date, hours, description) VALUES (?, ?, ?, ?, ?)";
-                PreparedStatement stmt = con.prepareStatement(query);
-                stmt.setString(1, currentUser);
-                stmt.setString(2, finalProject);
-                stmt.setString(3, workDate.toString());
-                stmt.setDouble(4, hoursWorked);
-                stmt.setString(5, description);
-                stmt.executeUpdate();
-                new Alert(Alert.AlertType.INFORMATION, "Work hours successfully recorded.").showAndWait();
+            try {
+                employee.addWorkHours(finalProject, workDate, hoursWorked, description);
+                showAlert("Information", "Work hours successfully recorded.");
             } catch (SQLException ex) {
-                new Alert(Alert.AlertType.ERROR, "Error saving work hours: " + ex.getMessage()).showAndWait();
+                showAlert("Error", "An error occurred while adding work hours: " + ex.getMessage());
             }
         });
 
@@ -159,5 +149,16 @@ public class TrackWorkHours {
         stage.setTitle("Track Work Hours");
         stage.setScene(scene);
         stage.show();
+    }
+
+    private void showAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        if (title.equals("Error")) {
+            alert.setAlertType(Alert.AlertType.ERROR);
+        }
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 }

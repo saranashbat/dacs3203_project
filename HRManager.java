@@ -1,6 +1,7 @@
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.time.LocalDate;
 
 public class HRManager extends User {
 
@@ -216,6 +217,36 @@ public class HRManager extends User {
             }
         }
     }
+
+    public List<WorkLog> getWorkLogsByUsername(String username) throws SQLException {
+        List<WorkLog> workLogs = new ArrayList<>();
+
+        String query = "SELECT * FROM workhours WHERE username = ?";
+
+        try (Connection con = DBUtils.establishConnection();
+             PreparedStatement stmt = con.prepareStatement(query)) {
+
+            stmt.setString(1, username);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    String projectName = rs.getString("name");
+                    LocalDate workDate = rs.getDate("date").toLocalDate();
+                    double hoursWorked = rs.getDouble("hours");
+                    String description = rs.getString("description");
+
+                    WorkLog workLog = new WorkLog(username, projectName, workDate, hoursWorked, description);
+                    workLogs.add(workLog);
+                }
+            }
+
+        } catch (SQLException e) {
+            throw e;
+        }
+
+        return workLogs;
+    }
+
 
 }
 

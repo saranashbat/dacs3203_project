@@ -10,6 +10,10 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import java.util.List;
+import javafx.scene.control.ScrollPane;
+
+
 
 import java.sql.*;
 import java.util.HashMap;
@@ -38,12 +42,11 @@ public class ViewWorkHours {
         employeeLabel.setFill(Color.DARKSLATEGRAY);
 
         ComboBox<String> employeeComboBox = new ComboBox<>();
-        try (Connection con = DBUtils.establishConnection();
-             Statement stmt = con.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT username FROM users WHERE username != 'hrmanager'")) {
+        try {
+            List<Employee> employees = hrManager.getAllEmployees();
 
-            while (rs.next()) {
-                employeeComboBox.getItems().add(rs.getString("username"));
+            for (Employee employee : employees) {
+                employeeComboBox.getItems().add(employee.getUsername());
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -75,6 +78,7 @@ public class ViewWorkHours {
         stage.show();
     }
 
+
     private void displayWorkHoursForEmployee(String employee, VBox layout, ComboBox<String> employeeComboBox, Button showWorkHoursButton) {
         VBox workHoursLayout = (VBox) layout.getChildren().get(4);
 
@@ -85,50 +89,54 @@ public class ViewWorkHours {
         loadingText.setFill(Color.DARKSLATEGRAY);
         workHoursLayout.getChildren().add(loadingText);
 
-        String query = "SELECT name, date, hours, description FROM workhours WHERE username = ?";
-
         double totalHours = 0.0;
 
-        try (Connection con = DBUtils.establishConnection();
-             PreparedStatement stmt = con.prepareStatement(query)) {
+        try {
+            List<WorkLog> workLogs = hrManager.getWorkLogsByUsername(employee);
 
-            stmt.setString(1, employee);
-            try (ResultSet rs = stmt.executeQuery()) {
-                boolean hasData = false;
+            boolean hasData = false;
 
-                while (rs.next()) {
-                    String projectName = rs.getString("name");
-                    String date = rs.getString("date");
-                    double hoursWorked = rs.getDouble("hours");
-                    String description = rs.getString("description");
+            for (WorkLog workLog : workLogs) {
+                String projectName = workLog.getProjectName();
+                String date = workLog.getWorkDate().toString();
+                double hoursWorked = workLog.getHoursWorked();
+                String description = workLog.getDescription();
 
-                    totalHours += hoursWorked;
+                totalHours += hoursWorked;
 
-                    VBox workHourEntry = new VBox(5);
-                    workHourEntry.setStyle("-fx-background-color: white; -fx-border-radius: 10; -fx-padding: 10; -fx-background-insets: 0; -fx-border-color: lightgray;");
-                    workHourEntry.setMaxWidth(350);
+                VBox workHourEntry = new VBox(5);
+                workHourEntry.setStyle("-fx-background-color: white; -fx-border-radius: 10; -fx-padding: 10; -fx-background-insets: 0; -fx-border-color: lightgray;");
+                workHourEntry.setMaxWidth(350);
 
-                    Text workHourInfo = new Text(String.format("Project: %s\nDate: %s\nHours Worked: %.2f\nDescription: %s",
-                            projectName, date, hoursWorked, description));
-                    workHourEntry.getChildren().add(workHourInfo);
-                    workHoursLayout.getChildren().add(workHourEntry);
+                Text workHourInfo = new Text(String.format("Project: %s\nDate: %s\nHours Worked: %.2f\nDescription: %s",
+                        projectName, date, hoursWorked, description));
+                workHourEntry.getChildren().add(workHourInfo);
+                workHoursLayout.getChildren().add(workHourEntry);
 
-                    hasData = true;
-                }
-
-                if (!hasData) {
-                    Text noDataText = new Text("No work hours found for this employee.");
-                    workHoursLayout.getChildren().add(noDataText);
-                }
-
-                Text totalHoursText = new Text("\nTotal Hours Worked: " + totalHours);
-                workHoursLayout.getChildren().add(totalHoursText);
+                hasData = true;
             }
+
+            if (!hasData) {
+                Text noDataText = new Text("No work hours found for this employee.");
+                workHoursLayout.getChildren().add(noDataText);
+            }
+
+            Text totalHoursText = new Text("\nTotal Hours Worked: " + totalHours);
+            workHoursLayout.getChildren().add(totalHoursText);
+
         } catch (SQLException e) {
             e.printStackTrace();
             Text errorText = new Text("Error fetching work hours: " + e.getMessage());
             workHoursLayout.getChildren().add(errorText);
         }
+
+        ScrollPane scrollPane = new ScrollPane(workHoursLayout);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(true);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+
+        layout.getChildren().set(4, scrollPane);
     }
+
 
 }
