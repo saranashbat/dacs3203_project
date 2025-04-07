@@ -51,12 +51,9 @@ public class UserLogin {
         loginButton.setMaxWidth(150);
         loginButton.setOnAction(event -> authenticate());
 
-        Button signUpButton = new Button("Sign Up");
-        signUpButton.setStyle("-fx-background-color: #90c6e6; -fx-text-fill: white; -fx-font-weight: bold; -fx-border-radius: 5; -fx-background-radius: 5;");
-        signUpButton.setMaxWidth(150);
-        // signUpButton.setOnAction(event -> {});
 
-        loginLayout.getChildren().addAll(titleLabel, usernameLabel, usernameField, passwordLabel, passwordField, loginButton, signUpButton);
+
+        loginLayout.getChildren().addAll(titleLabel, usernameLabel, usernameField, passwordLabel, passwordField, loginButton);
 
         loginScene = new Scene(loginLayout, 450, 350);
 

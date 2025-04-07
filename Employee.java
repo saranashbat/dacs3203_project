@@ -96,8 +96,7 @@ public class Employee extends User {
             String checkQuery = "SELECT COUNT(*) FROM workhours WHERE username = ? AND date = ?";
             try (PreparedStatement checkStmt = con.prepareStatement(checkQuery)) {
                 checkStmt.setString(1, this.getUsername());
-                checkStmt.setString(2, projectName);
-                checkStmt.setString(3, workDate.toString());
+                checkStmt.setString(2, workDate.toString());
 
                 ResultSet rs = checkStmt.executeQuery();
                 if (rs.next() && rs.getInt(1) > 0) {

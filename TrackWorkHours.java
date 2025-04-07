@@ -99,8 +99,16 @@ public class TrackWorkHours {
         descriptionLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
         descriptionLabel.setTextFill(Color.DARKSLATEGRAY);
 
-        TextField descriptionField = new TextField();
+        TextArea descriptionField = new TextArea();
         descriptionField.setPromptText("Describe the work done");
+        descriptionField.setWrapText(true);
+        descriptionField.setPrefRowCount(2);
+
+        descriptionField.textProperty().addListener((obs, oldText, newText) -> {
+            if (newText.length() > 100) {
+                descriptionField.setText(oldText);
+            }
+        });
 
         descriptionRow.getChildren().addAll(descriptionLabel, descriptionField);
 
