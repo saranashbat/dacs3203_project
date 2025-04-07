@@ -39,7 +39,6 @@ public class ViewPayrolls {
             List<Employee> employees = hrManager.getAllEmployees();
             for (Employee employee : employees) {
                 employeeComboBox.getItems().add(employee.getUsername());
-
             }
         } catch (SQLException ex) {
             showError("Error fetching employees: " + ex.getMessage());
@@ -54,12 +53,16 @@ public class ViewPayrolls {
             if (selectedEmployee != null) {
                 try {
                     Payroll payroll = hrManager.getPayrollByUsername(selectedEmployee);
-                    String payrollInfo = "Username: " + payroll.getUsername() +
-                            "\nSalary: " + payroll.getSalary() +
-                            "\nBonus: " + payroll.getBonus() +
-                            "\nDeductions: " + payroll.getDeductions() +
-                            "\nTotal Pay: " + payroll.getTotalPay();
-                    payrollDetailsLabel.setText(payrollInfo);
+                    if (payroll != null) {
+                        String payrollInfo = "Username: " + payroll.getUsername() +
+                                "\nSalary: " + payroll.getSalary() +
+                                "\nBonus: " + payroll.getBonus() +
+                                "\nDeductions: " + payroll.getDeductions() +
+                                "\nTotal Pay: " + payroll.getTotalPay();
+                        payrollDetailsLabel.setText(payrollInfo);
+                    } else {
+                        payrollDetailsLabel.setText("No payroll record found for this employee.");
+                    }
                 } catch (SQLException ex) {
                     showError("Error fetching payroll: " + ex.getMessage());
                 }

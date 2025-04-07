@@ -106,12 +106,14 @@ public class UserLogin {
             if (rs.next()) {
                 String role = rs.getString("role");
 
+                stage.close();
+
                 if (role.equals("hrmanager")) {
                     HRManager user = new HRManager(username, password, role);
                     HRManagerScreen hrManagerScreen = new HRManagerScreen(user);
                     hrManagerScreen.initializeComponents();
                 } else if (role.equals("employee")) {
-                    Employee user = new Employee(username, password, role, rs.getString("position"), rs.getDouble("salary"), rs.getString("project"), rs.getInt("vacationdays"));
+                    Employee user = new Employee(username, password, role, rs.getString("position"), rs.getDouble("salary"), rs.getString("project"));
                     EmployeeScreen employeeScreen = new EmployeeScreen(user);
                     employeeScreen.initializeComponents();
                 }

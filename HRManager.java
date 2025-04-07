@@ -149,7 +149,7 @@ public class HRManager extends User {
 
         Connection con = DBUtils.establishConnection();
 
-        String query = "SELECT username, hashedpass, role, position, salary, project, vacationdays FROM users WHERE role != 'hrmanager'";
+        String query = "SELECT username, hashedpass, role, position, salary, project FROM users WHERE role != 'hrmanager'";
         PreparedStatement stmt = con.prepareStatement(query);
 
         ResultSet rs = stmt.executeQuery();
@@ -161,9 +161,8 @@ public class HRManager extends User {
             String position = rs.getString("position");
             double salary = rs.getDouble("salary");
             String project = rs.getString("project");
-            int vacationDays = rs.getInt("vacationdays");
 
-            Employee employee = new Employee(username, password, role, position, salary, project, vacationDays);
+            Employee employee = new Employee(username, password, role, position, salary, project);
             employees.add(employee);
         }
 

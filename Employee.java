@@ -11,14 +11,12 @@ import java.sql.*;
 public class Employee extends User {
     private String position;
     private double salary;
-    private int vacationDays;
     private String project;
 
-    public Employee(String username, String password, String role, String position, double salary, String project, int vacationDays) {
+    public Employee(String username, String password, String role, String position, double salary, String project) {
         super(username, password, role);
         this.position = position;
         this.salary = salary;
-        this.vacationDays = vacationDays;
         this.project = project;
     }
 
@@ -30,9 +28,7 @@ public class Employee extends User {
         return salary;
     }
 
-    public int getVacationDays() {
-        return vacationDays;
-    }
+
 
     public String getProject() {
         return project;
