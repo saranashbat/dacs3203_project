@@ -85,9 +85,9 @@ public class ViewWorkHours {
         loadingText.setFill(Color.DARKSLATEGRAY);
         workHoursLayout.getChildren().add(loadingText);
 
-        Map<String, Double> totalHoursMap = new HashMap<>();
+        String query = "SELECT name, date, hours, description FROM workhours WHERE username = ?";
 
-        String query = "SELECT w.name, w.date, w.hours, w.description FROM workhours w WHERE w.username = ?";
+        double totalHours = 0.0;
 
         try (Connection con = DBUtils.establishConnection();
              PreparedStatement stmt = con.prepareStatement(query)) {
@@ -102,7 +102,7 @@ public class ViewWorkHours {
                     double hoursWorked = rs.getDouble("hours");
                     String description = rs.getString("description");
 
-                    totalHoursMap.put(employee, totalHoursMap.getOrDefault(employee, 0.0) + hoursWorked);
+                    totalHours += hoursWorked;
 
                     VBox workHourEntry = new VBox(5);
                     workHourEntry.setStyle("-fx-background-color: white; -fx-border-radius: 10; -fx-padding: 10; -fx-background-insets: 0; -fx-border-color: lightgray;");
@@ -121,9 +121,8 @@ public class ViewWorkHours {
                     workHoursLayout.getChildren().add(noDataText);
                 }
 
-                Text totalHoursText = new Text("\nTotal Hours Worked: " + totalHoursMap.getOrDefault(employee, 0.0));
+                Text totalHoursText = new Text("\nTotal Hours Worked: " + totalHours);
                 workHoursLayout.getChildren().add(totalHoursText);
-
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -131,4 +130,5 @@ public class ViewWorkHours {
             workHoursLayout.getChildren().add(errorText);
         }
     }
+
 }

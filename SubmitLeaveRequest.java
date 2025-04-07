@@ -49,17 +49,24 @@ public class SubmitLeaveRequest {
         submitButton.setOnAction(e -> {
             LocalDate startDate = startDatePicker.getValue();
             LocalDate endDate = endDatePicker.getValue();
+            LocalDate today = LocalDate.now();
 
-            if (startDate != null && endDate != null && !startDate.isAfter(endDate)) {
-                String startDateStr = startDate.toString();
-                String endDateStr = endDate.toString();
+            if (startDate != null && endDate != null) {
+                if (startDate.isBefore(today) || endDate.isBefore(today)) {
+                    showAlert("Error", "Dates cannot be in the past.");
+                } else if (!startDate.isAfter(endDate)) {
+                    String startDateStr = startDate.toString();
+                    String endDateStr = endDate.toString();
 
-                try {
-                    employee.requestLeave(startDateStr, endDateStr);
-                    showAlert("Success", "Leave request submitted successfully!");
-                } catch (Exception ex) {
-                    showAlert("Error", "Failed to submit leave request: " + ex.getMessage());
-                    ex.printStackTrace();
+                    try {
+                        employee.requestLeave(startDateStr, endDateStr);
+                        showAlert("Success", "Leave request submitted successfully!");
+                    } catch (Exception ex) {
+                        showAlert("Error", "Failed to submit leave request: " + ex.getMessage());
+                        ex.printStackTrace();
+                    }
+                } else {
+                    showAlert("Error", "Start date cannot be after end date.");
                 }
             } else {
                 showAlert("Error", "Please select valid start and end dates.");

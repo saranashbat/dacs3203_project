@@ -43,23 +43,8 @@ public class ViewLeaveRequests {
         scrollPane.setFitToWidth(true);
         scrollPane.setPrefHeight(200);
 
-        try {
-            List<LeaveRequest> leaveRequests = hrManager.getAllLeaveRequests();
-            for (LeaveRequest leaveRequest : leaveRequests) {
-                Label leaveRequestLabel = new Label(
-                        "Username: " + leaveRequest.getUsername() +
-                                "\nStart Date: " + leaveRequest.getStartDate() +
-                                "\nEnd Date: " + leaveRequest.getEndDate() +
-                                "\nStatus: " + leaveRequest.getStatus()
-                );
-                leaveRequestLabel.setWrapText(true);
-                leaveRequestLabel.setStyle("-fx-background-color: white; -fx-padding: 10; -fx-border-radius: 10; -fx-background-radius: 10; -fx-border-color: lightgray;");
-                requestContainer.getChildren().add(leaveRequestLabel);
-            }
-        } catch (SQLException ex) {
-            showAlert("Error", "An error occurred while getting all leave requests: " + ex.getMessage());
-            ex.printStackTrace();
-        }
+        // Fetch and display leave requests
+        loadLeaveRequests(requestContainer);
 
         Label usernameLabel = new Label("Enter Username to Approve:");
         usernameLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 16));
@@ -78,6 +63,7 @@ public class ViewLeaveRequests {
                 try {
                     hrManager.approveLeaveRequest(usernameToApprove);
                     showAlert("Success", "Leave request approved.");
+                    loadLeaveRequests(requestContainer);  // Reload the leave requests to reflect the change
                 } catch (SQLException ex) {
                     showAlert("Error", "An error occurred while approving the leave request: " + ex.getMessage());
                     ex.printStackTrace();
@@ -87,12 +73,36 @@ public class ViewLeaveRequests {
             }
         });
 
+
+
         layout.getChildren().addAll(titleLabel, scrollPane, usernameLabel, usernameField, approveButton, backButton);
 
         Scene scene = new Scene(layout, 600, 500);
         stage.setTitle("View Leave Requests");
         stage.setScene(scene);
         stage.show();
+    }
+
+    private void loadLeaveRequests(VBox requestContainer) {
+        requestContainer.getChildren().clear();  // Clear previous requests
+
+        try {
+            List<LeaveRequest> leaveRequests = hrManager.getAllLeaveRequests();
+            for (LeaveRequest leaveRequest : leaveRequests) {
+                Label leaveRequestLabel = new Label(
+                        "Username: " + leaveRequest.getUsername() +
+                                "\nStart Date: " + leaveRequest.getStartDate() +
+                                "\nEnd Date: " + leaveRequest.getEndDate() +
+                                "\nStatus: " + leaveRequest.getStatus()
+                );
+                leaveRequestLabel.setWrapText(true);
+                leaveRequestLabel.setStyle("-fx-background-color: white; -fx-padding: 10; -fx-border-radius: 10; -fx-background-radius: 10; -fx-border-color: lightgray;");
+                requestContainer.getChildren().add(leaveRequestLabel);
+            }
+        } catch (SQLException ex) {
+            showAlert("Error", "An error occurred while getting all leave requests: " + ex.getMessage());
+            ex.printStackTrace();
+        }
     }
 
     private void styleButton(Button button) {
@@ -115,6 +125,9 @@ public class ViewLeaveRequests {
 
     private void showAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        if (title.equals("Error")) {
+            alert.setAlertType(Alert.AlertType.ERROR);
+        }
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(content);

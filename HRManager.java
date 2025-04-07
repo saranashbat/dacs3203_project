@@ -55,21 +55,43 @@ public class HRManager extends User {
     }
 
     public void addPayroll(Payroll payroll) throws SQLException {
-        String query = "INSERT INTO payrolls (username, salary, bonus, deductions, totalpay) VALUES (?, ?, ?, ?, ?)";
+        String checkEmployeeQuery = "SELECT 1 FROM users WHERE username = ?";
+        String checkPayrollExistsQuery = "SELECT 1 FROM payrolls WHERE username = ?";
+        String insertPayrollQuery = "INSERT INTO payrolls (username, salary, bonus, deductions, totalpay) VALUES (?, ?, ?, ?, ?)";
 
-        try (Connection con = DBUtils.establishConnection();
-             PreparedStatement stmt = con.prepareStatement(query)) {
+        try (Connection con = DBUtils.establishConnection()) {
+            try (PreparedStatement checkEmployeeStmt = con.prepareStatement(checkEmployeeQuery)) {
+                checkEmployeeStmt.setString(1, payroll.getUsername());
+                ResultSet employeeRs = checkEmployeeStmt.executeQuery();
 
-            stmt.setString(1, payroll.getUsername());
-            stmt.setDouble(2, payroll.getSalary());
-            stmt.setDouble(3, payroll.getBonus());
-            stmt.setDouble(4, payroll.getDeductions());
-            stmt.setDouble(5, payroll.getTotalPay());
+                if (!employeeRs.next()) {
+                    throw new SQLException("Cannot add payroll: Employee with username '" + payroll.getUsername() + "' does not exist.");
+                }
+            }
 
-            stmt.executeUpdate();
-            System.out.println("Payroll record added for " + payroll.getUsername());
+            try (PreparedStatement checkPayrollStmt = con.prepareStatement(checkPayrollExistsQuery)) {
+                checkPayrollStmt.setString(1, payroll.getUsername());
+                ResultSet payrollRs = checkPayrollStmt.executeQuery();
+
+                if (payrollRs.next()) {
+                    throw new SQLException("Cannot add payroll: Payroll already exists for employee '" + payroll.getUsername() + "'.");
+                }
+            }
+
+            try (PreparedStatement insertStmt = con.prepareStatement(insertPayrollQuery)) {
+                insertStmt.setString(1, payroll.getUsername());
+                insertStmt.setDouble(2, payroll.getSalary());
+                insertStmt.setDouble(3, payroll.getBonus());
+                insertStmt.setDouble(4, payroll.getDeductions());
+                insertStmt.setDouble(5, payroll.getTotalPay());
+
+                insertStmt.executeUpdate();
+                System.out.println("Payroll record added for " + payroll.getUsername());
+            }
         }
     }
+
+
 
     public List<Payroll> getAllPayrolls() throws SQLException {
         List<Payroll> payrolls = new ArrayList<>();

@@ -19,7 +19,6 @@ public class Employee extends User {
         this.project = project;
     }
 
-    // Getters
     public String getPosition() {
         return position;
     }
@@ -54,7 +53,7 @@ public class Employee extends User {
                 stmt.setString(1, this.getUsername());
                 stmt.setDate(2, new java.sql.Date(startDate.getTime()));
                 stmt.setDate(3, new java.sql.Date(endDate.getTime()));
-                stmt.setString(4, "Pending");
+                stmt.setString(4, "pending");
 
                 int rs = stmt.executeUpdate();
                 if (rs > 0) {

@@ -10,6 +10,7 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
 import java.sql.*;
+import java.time.LocalDate;
 
 public class TrackWorkHours {
     private Employee employee;
@@ -103,12 +104,19 @@ public class TrackWorkHours {
         submitButton.setStyle("-fx-background-color: #7fa9d8; -fx-text-fill: white; -fx-font-weight: bold; -fx-border-radius: 5; -fx-background-radius: 5;");
         submitButton.setMaxWidth(175);
         submitButton.setOnAction(e -> {
-            String workDate = workDatePicker.getValue().toString();
+            LocalDate workDate = workDatePicker.getValue();
+            LocalDate today = LocalDate.now();
+
+            if (workDate != null && workDate.isBefore(today)) {
+                new Alert(Alert.AlertType.ERROR, "Work date cannot be in the past.").showAndWait();
+                return;
+            }
+
             double hoursWorked;
             try {
                 hoursWorked = Double.parseDouble(hoursWorkedField.getText());
-                if (hoursWorked < 0) {
-                    throw new NumberFormatException("Hours must be positive.");
+                if (hoursWorked < 0 || hoursWorked > 12) {
+                    throw new NumberFormatException("Hours must be between 0 and 12.");
                 }
             } catch (NumberFormatException ex) {
                 new Alert(Alert.AlertType.ERROR, "Invalid hours. Please enter a valid number.").showAndWait();
@@ -122,7 +130,7 @@ public class TrackWorkHours {
                 PreparedStatement stmt = con.prepareStatement(query);
                 stmt.setString(1, currentUser);
                 stmt.setString(2, finalProject);
-                stmt.setString(3, workDate);
+                stmt.setString(3, workDate.toString());
                 stmt.setDouble(4, hoursWorked);
                 stmt.setString(5, description);
                 stmt.executeUpdate();
